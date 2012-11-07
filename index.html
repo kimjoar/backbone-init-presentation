@@ -600,6 +600,36 @@ rendres.
 
 ---
 
+# sync
+
+`Backbone.sync` brukes for persistering.
+
+Felles start på URL mot REST-endepunkt? For eksempel "/sbk/rest"
+
+    .javascript
+    var User = Model.extend({
+        url: "/sbk/rest/user" // kjipt
+    });
+
+Kan enkelt settes automatisk:
+
+    .javascript
+    var mysync = function(method, model, options) {
+        var url = options.url || _.result(model, 'url');
+        options.url = '/sbk/rest' + url;
+        return Backbone.sync.call(this, method, model, options);
+    };
+
+    var Model = Backbone.Model.extend({
+        sync: mysync
+    });
+
+    var User = Model.extend({
+        url: "/user" // bedre!
+    });
+
+---
+
 # Testing
 
 "Grove" tester: mocker Ajax, jobber mot DOM-en

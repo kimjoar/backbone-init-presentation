@@ -3,7 +3,6 @@ Enkle utvidelser av sync
 Spinnere
 Minnelekasjer
 - bindTo over bind
-Router
 Pass på ansvar:
 - Nettverk => Modell
 - DOM => View
@@ -37,4 +36,5 @@ Alltid send inn `el`
 Vise hvordan parse kan brukes, jf Backbone meetup
 Hvordan vise views
 Ikke vær redd for vanlige JavaScript-objekter
+Router
 
