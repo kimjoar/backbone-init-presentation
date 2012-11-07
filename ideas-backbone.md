@@ -37,3 +37,4 @@ Alltid send inn `el`
 Vise hvordan parse kan brukes, jf Backbone meetup
 Hvordan vise views
 Ikke vær redd for vanlige JavaScript-objekter
+

@@ -18,6 +18,7 @@
       #slideshow .slide .content ul li { padding-left: 1.3em; }
       #slideshow .slide .content.big-code pre code { font-size: 20px; }
       #slideshow .slide .content.big-code code { font-size: 20px; }
+      #slideshow .slide .content.mega-code code { font-size: 30px; background-color: #fff; }
       #slideshow .slide .content ul li { padding-left: 1.3em; }
       #slideshow .slide .attr a { color:#333; font-size:0.8em; }
       #slideshow .slide .fullscreen img { width:100%; height:100%; position:absolute; top:40px; left:0; }
@@ -44,11 +45,9 @@ Kim Joar Bekkelund
 
 ---
 
-.agenda
+.middle.center
 
-# Agenda
-
-* Intro
+Mye kode, stopp meg når som helst!
 
 ---
 
@@ -58,7 +57,7 @@ Lite bibliotek
 
 Har som mål å «gi struktur til JavaScript-applikasjoner»
 
-Høyere nivå abstraksjon, ikke ferdig rammeverk
+Høyere nivå abstraksjon, ikke et ferdig oppsett
 
 ---
 
@@ -70,19 +69,9 @@ Minimalistisk
 
 Hverken MVC, MVP eller MVVM ut av boksen
 
+Lett å gå i "rammeverksfella"
+
 Litt uvanlig type JavaScript
-
----
-
-.middle.center.big-code
-
-`Model/Collection <=> View <=> Template`
-
----
-
-.middle.center
-
-Dette er enkle konsepter, ikke overkompliser
 
 ---
 
@@ -98,7 +87,11 @@ Abstraherer bort AJAX
 
     .javascript
     var User = Backbone.Model.extend({
-        url: "/user" // URL som skal brukes, kan også være en funksjon
+        url: "/user" // URL som skal brukes, kan også være en funksjon,
+
+        testMethod: function() {
+            // kan lage egne metoder
+        }
     });
 
     var user = new User();
@@ -108,6 +101,9 @@ Abstraherer bort AJAX
 
     // for å lagre data
     user.save();
+
+    // kalle egne metoder
+    user.testMethod();
 
 Istedenfor callbacks, brukes oftest eventer i Backbone:
 
@@ -135,6 +131,17 @@ Fyrer eventer, blant annet `add`, `remove` og `reset`
 Mange herlige hjelpefunksjoner, som `filter`, `reduce`, `map` og `max`
 
 (Bruk tid på å se på [underscore.js](http://underscorejs.org/))
+
+    .javascript
+    var user = new User();
+
+    var users = new Users(); // har `url` spesifisert
+
+    users.on("add", function() {
+        console.log("Bruker lagt til");
+    });
+
+    users.create(user);
 
 ---
 
@@ -199,6 +206,7 @@ Kalle model- og collection-metoder
     .javascript
     var UserView = Backbone.View.extend({
 
+        // dette er navnet på konstruktøren i Backbone
         initialize: function(options) {
             this.user = options.user;
 
@@ -213,6 +221,7 @@ Kalle model- og collection-metoder
 
     var user = new User();
     var userView = new UserView({ user: user });
+    user.fetch(); // trigger "change"
 
 ---
 
@@ -246,7 +255,7 @@ Samme for modeller og collections:
 
 .big-code
 
-# Rendring av template
+# Eksempel: Rendring av template
 
 Har en `renderTemplate`:
 
@@ -258,7 +267,7 @@ Har en `renderTemplate`:
         render: function() {
             this.renderTemplate(this.user.toJSON(), this.account.toJSON());
 
-            // konvensjon
+            // konvensjon, muliggjør `view.render().el`
             return this;
         }
 
@@ -268,9 +277,9 @@ Har en `renderTemplate`:
 
 .big-code
 
-# Rendring av template
+# Eksempel: Rendring av template
 
-Legger i baseviewet
+Ligger i baseviewet
 
     .javascript
     var View = Backbone.View.extend({
@@ -291,9 +300,27 @@ Legger i baseviewet
         template: function() {
             // bruker templateName for å finne template
             // eks: ajax, Require.js, i HTML-en, kompilert til JS
+            // hvilken som helst template-motor
         }
-
     });
+
+---
+
+.middle.center.mega-code
+
+`Model/Collection <=> View <=> Template`
+
+---
+
+.middle.center
+
+Dette er enkle konsepter, ikke overkompliser
+
+---
+
+.middle.center
+
+Noen eksempler der mange (unødvendig) går for plugins
 
 ---
 
@@ -318,23 +345,25 @@ Rendrer ofte views i views. Deler opp ansvaret for `el`.
         },
 
         renderAccountInformation: function() {
-            var accountInfoView = new AccountInformationView({
+            this.accountView = this.accountView || new AccountView({
                 el: this.$('.account'),
                 account: this.account
             });
-            accountInfoView.render();
+
+            this.accountView.render();
         }
 
     });
 
-    var user = new User();
-    var userView = new UserView({ user: user });
+    var userView = new UserView({ user: user, account: account });
+    user.fetch();
 
 ---
 
-.big-code
-
 # Nestet JSON
+
+For eksempel bruker-response som inneholder venner og litt
+kontoinformasjon.
 
 Trenger ikke noe avansert bibliotek. `parse` kjøres etter hvert Ajax-kall.
 
@@ -368,6 +397,8 @@ Trenger ikke noe avansert bibliotek. `parse` kjøres etter hvert Ajax-kall.
 
 Trenger sjelden et avansert bibliotek.
 
+Dra inn lite kompleksitet i begynnelsen.
+
 It's just JavaScript.
 
 ---
@@ -387,11 +418,13 @@ Lokale:
 Globale:
 
     .javascript
+    // lager en event-aggregator
     var events = _.clone(Backbone.Events);
+
     events.on("some-event", this.someFunction);
     events.trigger("some-event");
 
-Singleton som jeg setter på namespacet.
+Singleton som for eksempel kan settes på namespacet.
 
 ---
 
@@ -473,13 +506,138 @@ Jeg lager ofte en `dispose` i base-viewet:
 
         // Remove the view from the DOM
         this.remove();
+
+        // Recusively destroy all subviews
+        this.destroySubViews(); // neste slide
     }
+
+---
+
+.big-code
+
+# Minnelekasjer i subviews
+
+    .javascript
+    var UserView = Backbone.View.extend({
+
+        initialize: function(options) {
+            // ...
+        },
+
+        render: function() {
+            // ...
+            this.renderAccountInformation();
+            return this;
+        },
+
+        renderAccountInformation: function() {
+            this.accountView = this.accountView || new AccountView({
+                el: this.$('.account'),
+                account: this.account
+            });
+            this.addSubView(this.accountView); // viktig!
+            this.accountView.render();
+        }
+
+    });
+
+---
+
+# Oppsett av app
+
+Min nåværende applikasjon:
+
+    .javascript
+    var app = new App({ el: $('body') });
+
+    // layout
+    // får med hovedelementet og selektor
+    app.addSections({
+        'main': '#main',
+        'nav': '#nav'
+    });
+
+    app.start(function() {
+        Backbone.history.start();
+    });
+
+Start av applikasjon:
+
+    .javascript
+    App.prototype.start = function(done) {
+        this.renderTemplate(); // rendrer grunnoppsettet
+
+        this.router = new Router(this.sections);
+
+        done();
+    };
+
+---
+
+# Router
+
+    .javascript
+    var Router = Backbone.Router.extend({
+        initialize: function(sections) {
+            this.sections = sections;
+        },
+
+        routes: {
+            '': 'user'
+        },
+
+        user: function() {
+            var user = new User();
+            var userView = new UserView({ user: user });
+            user.fetch();
+
+            this.sections.main.show(userView);
+        }
+    });
+
+I en `section`, ta vare på `currentView` og kall `destroy` før nytt view
+rendres.
+
+---
+
+# Testing
+
+"Grove" tester: mocker Ajax, jobber mot DOM-en
+
+Siden vi alltid kan sende inn `el` til viewene:
+
+    .javascript
+    var el = $('<div></div>');
+    var userView = new UserView({ el: el });
+    userView.render();
+
+    el.find('.btn').click();
+
+    // sjekk at rett ting har skjedd
+
+Veldig enkelt å mocke Ajax med Sinon.js:
+
+    .javascript
+    var response = { id: 12, comment: "Testing" };
+    var headers = { "Content-Type": "application/json" }; 
+
+    var server = sinon.fakeServer.create();
+
+    server.respondWith([200, headers, JSON.stringify(response)]);
+
+    // gjør noe som trigger et Ajax-kall
+
+    server.respond();
+
+    server.restore(); // Husk!
 
 ---
 
 # Overordnede tanker
 
 La så lite som mulig skje i `initialize`
+
+La så mye som mulig være ferdig prosessert fra serveren
 
 Prøv å send inn avhengigheter (Passer ikke alltid, men bra for testbarhet)
 
