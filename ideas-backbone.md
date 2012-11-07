@@ -1,8 +1,4 @@
-Gjør så mye som mulig på serveren
-Enkle utvidelser av sync
 Spinnere
-Minnelekasjer
-- bindTo over bind
 Pass på ansvar:
 - Nettverk => Modell
 - DOM => View
@@ -19,9 +15,6 @@ Layout/sections
 - Hvem har ansvaret?
 Tenk på komponenter
 Underscore.js er kraftig
-Pass på å ikke dra inn for mange avhengigheter
-- Backbone er lite og enkelt å forstå
-- Trenger sjelden "all magien", de tar mange valg. Vanskelig å forstå valgene uten å kjenne Backbone.
 
 
 Base{View, Model, Collection}
@@ -37,4 +30,11 @@ Vise hvordan parse kan brukes, jf Backbone meetup
 Hvordan vise views
 Ikke vær redd for vanlige JavaScript-objekter
 Router
+Gjør så mye som mulig på serveren
+Enkle utvidelser av sync
+Minnelekasjer
+- bindTo over bind
+Pass på å ikke dra inn for mange avhengigheter
+- Backbone er lite og enkelt å forstå
+- Trenger sjelden "all magien", de tar mange valg. Vanskelig å forstå valgene uten å kjenne Backbone.
 

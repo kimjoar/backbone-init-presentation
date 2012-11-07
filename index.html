@@ -71,13 +71,13 @@ Hverken MVC, MVP eller MVVM ut av boksen
 
 Lett å gå i "rammeverksfella"
 
-Litt uvanlig type JavaScript
+For mange, litt "uvanlig" JavaScript
 
 ---
 
 .middle.center
 
-"Forretningslogikk" i modellene
+"Forretningslogikk" og data i modellene
 
 ---
 
@@ -116,6 +116,28 @@ Istedenfor callbacks, brukes oftest eventer i Backbone:
 
 ---
 
+# Modeller
+
+Sette og hente data:
+
+    .javascript
+    var user = new User({ name: "Kim" });
+
+    user.set({
+        from: "Andøya",
+        address: {
+            street: "Toftes gate 17",
+            postCode: "0556"
+        }
+    });
+
+    user.get("address");
+    // { street: "Toftes gate 17", postCode: "0556" }
+
+    user.toJSON(); // får all data
+
+---
+
 .middle.center
 
 Collection er bare en liste av modeller
@@ -142,6 +164,7 @@ Mange herlige hjelpefunksjoner, som `filter`, `reduce`, `map` og `max`
     });
 
     users.create(user);
+    // gjør POST til server
 
 ---
 
@@ -176,20 +199,23 @@ Et view eier et DOM-element, `el`
 
 # Views
 
-Lytter på DOM-eventer
+Deklarativ lytting på DOM-eventer
 
     .javascript
     var LoginView = Backbone.View.extend({
 
         events: {
-            "submit .login": "login"
+            "submit .login": "login",
+            "click .btn": "buttonHandler"
         },
 
         login: function(event) {
             event.preventDefault();
 
             // ...
-        }
+        },
+
+        // ...
 
     });
 
